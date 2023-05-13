@@ -23,7 +23,7 @@ def create_app():
         openapi_schema["info"]["x-logo"] = {
             "url": "http://localhost:8000/static/images/icons/gear.png"
         }
-        openapi_schema["components"]["securitySchemes"]["OAuth2PasswordBearer"]["flows"]["password"]["tokenUrl"] = "/api/v1/auth/token"
+        openapi_schema["components"]["securitySchemes"]["OAuth2PasswordBearer"]["flows"]["password"]["tokenUrl"] = f"{settings.API_V1_STR}/auth/token"
         app.openapi_schema = openapi_schema
         return app.openapi_schema
 

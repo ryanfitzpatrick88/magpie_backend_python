@@ -6,7 +6,6 @@ from .user import UserBase
 
 
 class ImportBatchBase(BaseModel):
-    id: int
     imported_at: datetime = datetime.now()
     source: str
     file_name: str
@@ -23,4 +22,7 @@ class ImportBatchBaseUpdate(ImportBatchBase):
     pass
 
 class ImportBatchBaseInDB(ImportBatchBase):
-    pass
+    id: int
+
+    class Config:
+        orm_mode = True

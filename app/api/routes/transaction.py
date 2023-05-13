@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionInDB
 from app.db.models.user import User
+from app.schemas.user import UserInDB
 from app.services.transaction import create_transaction, get_transactions, get_transaction, update_transaction, \
     delete_transaction, preview_transactions, upload_transactions, delete_transactions_by_batch, \
     get_transactions_by_batch
@@ -55,7 +56,7 @@ async def preview_transactions_file(file: UploadFile = File(...), db: Session = 
     return transactions
 
 @router.post("/upload")
-async def upload_transactions_file(file: UploadFile = File(...), db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
+async def upload_transactions_file(file: UploadFile = File(...), db: Session = Depends(get_user_db), current_user: UserInDB = Depends(get_current_user)):
     contents = await file.read()
     try:
         upload_transactions(db, contents, file, current_user)
@@ -67,7 +68,7 @@ async def upload_transactions_file(file: UploadFile = File(...), db: Session = D
 """create endpoint get transactions for batch id"""
 @router.get("/batch/{batch_id}", response_model=List[TransactionInDB])
 def read_transactions_by_batch(batch_id: int, page: int, db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
-    transactions = get_transactions_by_batch(db, batch_id=batch_id)
+    transactions = get_transactions_by_batch(db, batch_id=batch_id, page=page)
     return transactions
 
 """create endpoint to delete trnasactions by batch id"""

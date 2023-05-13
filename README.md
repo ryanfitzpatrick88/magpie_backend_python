@@ -1,25 +1,25 @@
 # magpie_backend_python
 
-#alembic commands
+## alembic commands
 
-#to create next revision for database
+### to create next revision for database
 
 alembic revision --autogenerate -m "0.0.x"
 
-#upgrade the database
+### upgrade the database
 
 alembic upgrade head
 
-#check the current revision
+### check the current revision
 
 alembic current
 
-#check for upgrade operations
+### check for upgrade operations
 
 alembic check
 
 
---roadmap
+## roadmap
 
 --pluggable accounts that contain the database connection.
 

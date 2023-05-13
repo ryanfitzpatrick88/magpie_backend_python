@@ -2,11 +2,13 @@ from datetime import datetime
 from io import StringIO
 import csv
 from sqlalchemy.orm import Session
+
+from app.db.models import User
 from app.db.models.transaction import Transaction
 from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionImport
 from app.schemas.import_batch import ImportBatchBaseCreate
 from app.api.routes.import_batch import create_import_batch
-from app.schemas.user import UserBase
+from app.schemas.user import UserBase, UserInDB
 
 
 def get_transactions(db: Session, skip: int = 0, limit: int = 100):
@@ -16,7 +18,7 @@ def get_transaction(db: Session, transaction_id: int):
     return db.query(Transaction).filter(Transaction.id == transaction_id).first()
 
 def create_transaction(db: Session, transaction: TransactionCreate):
-    db_transaction = Transaction(**transaction.dict())
+    db_transaction = Transaction(**transaction.dict(exclude={"batch"}))
     db.add(db_transaction)
     db.commit()
     db.refresh(db_transaction)
@@ -42,8 +44,10 @@ def delete_transaction(db: Session, transaction_id: int):
     return True
 
 """get_transactions_by_batch"""
-def get_transactions_by_batch(db: Session, batch_id: int):
-    return db.query(Transaction).filter(Transaction.batch_id == batch_id).all()
+def get_transactions_by_batch(db: Session, batch_id: int, page: int, page_size: int = 10):
+    transactions = db.query(Transaction).filter(Transaction.batch_id == batch_id)
+    transactions = transactions.offset(page_size * (page - 1)).limit(page_size)
+    return transactions.all()
 
 """delete_transactions_by_batch"""
 def delete_transactions_by_batch(db: Session, batch_id: int):
@@ -73,7 +77,7 @@ def preview_transactions(file_contents: bytes):
     return transactions
 
 
-def upload_transactions(db: Session, file_contents: bytes, file, current_user:UserBase):
+def upload_transactions(db: Session, file_contents: bytes, file, current_user: UserInDB):
     file_str = file_contents.decode()
     reader = csv.DictReader(StringIO(file_str))
 
@@ -81,8 +85,10 @@ def upload_transactions(db: Session, file_contents: bytes, file, current_user:Us
         imported_at = datetime.now(),
         source = "csv",
         file_name = file.filename,
-        user_id = current_user.id
+        user_id = current_user.id,
+        user = current_user.__dict__
     )
+
     batch = create_import_batch(db, batch)
 
     for row in reader:
