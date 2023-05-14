@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, Sequence
+from sqlalchemy import Column, Integer, String, Boolean, Sequence, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 from app.db.models.base import BaseModel
+from app.db.models.user_account import UserAccount
 
 class User(BaseModel):
     __tablename__ = "users"
@@ -10,7 +11,9 @@ class User(BaseModel):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
-    database = Column(String)
+    user_account_id = Column(Integer, ForeignKey('user_accounts.id'))
+
+    user_account = relationship(UserAccount, uselist=False)
 
     @validates("email")
     def validate_email(cls, key, value):

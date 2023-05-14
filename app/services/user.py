@@ -1,4 +1,5 @@
 import jwt
+from uuid import uuid4
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -13,12 +14,27 @@ from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from app.core.config import settings
 from app.schemas.token import TokenData
+from app.db.models.user_account import UserAccount
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 def create_user(db: Session, user: UserRegister):
     hashed_password = get_password_hash(user.password)
     db_user = User(username=user.email, email=user.email, hashed_password=hashed_password)
+
+    # Create a UserAccount instance
+    user_account = UserAccount(
+        database=str(uuid4()),  # Generate a random GUID
+        alias="account",
+        is_active=True,
+        is_deleted=False,
+    )
+
+    # Associate the UserAccount instance with the User instance
+    db_user.user_account = user_account
+
+    # Add the User instance (and the associated UserAccount instance) to the session
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -41,7 +57,7 @@ def update_user(db: Session, user_id: int, updated_user: User):
     db_user.username = updated_user.username
     db_user.email = updated_user.email
     db_user.is_active = updated_user.is_active
-    db_user.database = updated_user.database
+    db_user.user_account.database = updated_user.user_account.database
     db.commit()
     db.refresh(db_user)
     return db_user

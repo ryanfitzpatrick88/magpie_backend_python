@@ -1,7 +1,7 @@
 from datetime import datetime, date
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from app.schemas.import_batch import ImportBatchBase
 
 class TransactionImport(BaseModel):
@@ -18,7 +18,7 @@ class TransactionImport(BaseModel):
     def parse_date(cls, value):
         return datetime.strptime(value, '%d%b%Y')  # Parses date in the format "11May2023"
 
-"""how do i get the whole ImportBatch object here?"""
+
 class TransactionBase(BaseModel):
     amount: float
     description: Optional[str] = None
@@ -41,3 +41,10 @@ class TransactionInDB(TransactionBase):
 
     class Config:
         orm_mode = True
+
+class TransactionDuplicate(BaseModel):
+    amount: float
+    description: Optional[str] = None
+    date: date
+    transactions: List[TransactionInDB]
+

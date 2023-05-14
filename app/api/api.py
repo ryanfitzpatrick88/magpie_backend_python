@@ -13,7 +13,7 @@ router = APIRouter()
 def get_app_info(db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
     try:
         app_info = db.execute(text("SELECT * FROM alembic_version")).fetchone()
-        return {"username": current_user.username, "database": current_user.database, "version": app_info[0]}
+        return {"username": current_user.username, "database": current_user.user_account.database, "version": app_info[0]}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

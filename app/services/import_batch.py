@@ -5,7 +5,7 @@ from app.schemas.import_batch import ImportBatchBaseCreate, ImportBatchBaseUpdat
 
 """create a new import_batch"""
 def create_import_batch(db: Session, import_batch: ImportBatchBaseCreate):
-    db_import_batch = ImportBatch(**import_batch.dict(exclude={"user"}))
+    db_import_batch = ImportBatch(**import_batch.dict())
     db.add(db_import_batch)
     db.commit()
     db.refresh(db_import_batch)

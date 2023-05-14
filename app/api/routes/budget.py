@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.schemas.budget import BudgetCreate, BudgetUpdate, BudgetInDB
 from app.db.models.user import User
 from app.services.budget import create_budget, get_budgets, get_budget, update_budget, delete_budget
-from app.depdendencies import get_db
+from app.dependencies import get_db
 from app.api.dependencies import get_current_user
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")

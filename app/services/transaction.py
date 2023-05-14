@@ -2,10 +2,11 @@ from datetime import datetime
 from io import StringIO
 import csv
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 
 from app.db.models import User
 from app.db.models.transaction import Transaction
-from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionImport
+from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionImport, TransactionDuplicate
 from app.schemas.import_batch import ImportBatchBaseCreate
 from app.api.routes.import_batch import create_import_batch
 from app.schemas.user import UserBase, UserInDB
@@ -16,6 +17,48 @@ def get_transactions(db: Session, skip: int = 0, limit: int = 100):
 
 def get_transaction(db: Session, transaction_id: int):
     return db.query(Transaction).filter(Transaction.id == transaction_id).first()
+
+# get_transactions_by_date_range
+def get_transactions_by_date_range(db: Session, start_date: str, end_date: str, page: int = 0, page_size: int = 10):
+    transactions = db.query(Transaction).filter(and_(Transaction.date >= start_date, Transaction.date <= end_date))
+    transactions = transactions.offset(page_size * (page - 1)).limit(page_size)
+    return transactions.all()
+
+def get_transactions_by_date_range_for_duplicates(db: Session, start_date: str, end_date: str):
+    transactions = db.query(Transaction).filter(and_(Transaction.date >= start_date, Transaction.date <= end_date)).all()
+    duplicates_dict = {}
+
+    for transaction in transactions:
+        key = (transaction.description, transaction.amount, transaction.date)
+        if key not in duplicates_dict:
+            duplicates_dict[key] = [transaction.id]
+        else:
+            duplicates_dict[key].append(transaction.id)
+
+    # Filter out keys where there is only one transaction, as this means there are no duplicates
+    duplicates_dict = {key: value for key, value in duplicates_dict.items() if len(value) > 1}
+
+    # Create TransactionDuplicate objects for each duplicate
+    duplicates = []
+    for key, ids in duplicates_dict.items():
+        duplicate_transactions = []
+        for id in ids:
+            # Retrieve the actual transaction object for each id
+            transaction = db.query(Transaction).filter(Transaction.id == id).first()
+            if transaction:
+                duplicate_transactions.append(transaction)
+
+        # Create a TransactionDuplicate object
+        if duplicate_transactions:
+            duplicate = TransactionDuplicate(
+                description=key[0],
+                amount=key[1],
+                date=key[2],
+                transactions=duplicate_transactions
+            )
+            duplicates.append(duplicate)
+
+    return duplicates
 
 def create_transaction(db: Session, transaction: TransactionCreate):
     db_transaction = Transaction(**transaction.dict(exclude={"batch"}))
@@ -85,8 +128,7 @@ def upload_transactions(db: Session, file_contents: bytes, file, current_user: U
         imported_at = datetime.now(),
         source = "csv",
         file_name = file.filename,
-        user_id = current_user.id,
-        user = current_user.__dict__
+        user_id = current_user.id
     )
 
     batch = create_import_batch(db, batch)

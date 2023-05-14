@@ -7,7 +7,7 @@ from app.schemas.user import UserCreate, UserUpdate, UserInDB, UserRegister, Ema
 from app.db.models.user import User
 from app.services.user import create_user, get_users, get_user, update_user, delete_user, get_user_by_username, \
     get_user_by_email
-from app.depdendencies.depdendecies import get_db
+from app.dependencies.dependecies import get_db
 from app.api.dependencies import get_current_user
 
 

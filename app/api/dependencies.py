@@ -10,7 +10,7 @@ from app.core.config import settings
 from app.schemas.token import TokenData
 from app.services.user import get_user
 from jwt import decode, exceptions
-from app.depdendencies.depdendecies import get_db
+from app.dependencies.dependecies import get_db
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -68,7 +68,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 def get_user_db(user: User = Depends(get_current_user)) -> Session:
     if user:
-        database_url = f'sqlite:///../database/{user.database}.db'
+        database_url = f'sqlite:///../database/{user.user_account.database}.db'
     else:
         database_url = settings.DATABASE_URL  # replace with your default url
 

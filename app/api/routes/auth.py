@@ -10,7 +10,7 @@ from app.db.session import SessionLocal
 from app.schemas.user import AccessToken, LoginForm, ValidateToken, RefreshToken, LoginToken
 from fastapi import Security, Depends
 from fastapi.security import OAuth2PasswordBearer
-from app.depdendencies.depdendecies import get_db
+from app.dependencies.dependecies import get_db
 from app.api.dependencies import get_current_user, get_user_from_refresh_token, get_user_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")

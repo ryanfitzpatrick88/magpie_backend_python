@@ -3,12 +3,12 @@ from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionInDB
+from app.schemas.transaction import TransactionCreate, TransactionUpdate, TransactionInDB, TransactionDuplicate
 from app.db.models.user import User
 from app.schemas.user import UserInDB
 from app.services.transaction import create_transaction, get_transactions, get_transaction, update_transaction, \
     delete_transaction, preview_transactions, upload_transactions, delete_transactions_by_batch, \
-    get_transactions_by_batch
+    get_transactions_by_batch, get_transactions_by_date_range, get_transactions_by_date_range_for_duplicates
 from app.api.dependencies import get_current_user, get_user_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
@@ -23,6 +23,12 @@ def create_transaction_item(transaction: TransactionCreate, db: Session = Depend
 @router.get("/", response_model=List[TransactionInDB])
 def read_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
     transactions = get_transactions(db, skip=skip, limit=limit)
+    return transactions
+
+# get all transactions by date range, with page and limit
+@router.get("/getByDateRange", response_model=List[TransactionInDB])
+def read_transactions_by_date_range(start_date: str, end_date: str, page: int = 0, db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
+    transactions = get_transactions_by_date_range(db, start_date=start_date, end_date=end_date, page=page)
     return transactions
 
 @router.get("/{transaction_id}", response_model=TransactionInDB)
@@ -63,6 +69,12 @@ async def upload_transactions_file(file: UploadFile = File(...), db: Session = D
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"detail": "Transactions uploaded successfully"}
+
+"""create endpoint that dates date range for endpoint called analyze-duplicates"""
+@router.get("/getByDateRangeForDuplicates/{start_date}/{end_date}", response_model=List[TransactionDuplicate])
+def read_transactions_by_date_range_for_duplicates(start_date: str, end_date: str, db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
+    transactions = get_transactions_by_date_range_for_duplicates(db, start_date=start_date, end_date=end_date)
+    return transactions
 
 
 """create endpoint get transactions for batch id"""

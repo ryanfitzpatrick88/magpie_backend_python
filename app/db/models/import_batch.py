@@ -9,6 +9,4 @@ class ImportBatch(BaseModel):
     imported_at = Column(DateTime, nullable=False)
     source = Column(String(255), nullable=False)
     file_name = Column(String(255), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
-
-    user = relationship('User', backref='import_batches')
+    user_id = Column(Integer, nullable=False)

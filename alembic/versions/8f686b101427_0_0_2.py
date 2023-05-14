@@ -26,7 +26,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    # sa.ForeignKeyConstraint(['user_id'], ['users.id'], ), really bad idea to have without a name
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_import_batches_id'), 'import_batches', ['id'], unique=False)

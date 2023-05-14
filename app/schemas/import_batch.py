@@ -10,7 +10,6 @@ class ImportBatchBase(BaseModel):
     source: str
     file_name: str
     user_id: int
-    user: Optional[UserBase] = None
 
     class Config:
         orm_mode = True
