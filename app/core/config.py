@@ -2,8 +2,11 @@ import os
 from typing import List
 from pydantic import BaseSettings, AnyHttpUrl
 from datetime import timedelta
+from dotenv import load_dotenv
 
 class Settings(BaseSettings):
+    load_dotenv(".env.local")
+
     PROJECT_NAME: str = os.getenv("PROJECT_NAME", "Magpie")
     PROJECT_VERSION: str = os.getenv("PROJECT_VERSION", "0.0.1")
 

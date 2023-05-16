@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from fastapi.openapi.utils import get_openapi
+from dotenv import load_dotenv
 
 from app.core.config import settings
 from app.api.api import router as api_router

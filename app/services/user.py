@@ -57,7 +57,7 @@ def update_user(db: Session, user_id: int, updated_user: User):
     db_user.username = updated_user.username
     db_user.email = updated_user.email
     db_user.is_active = updated_user.is_active
-    db_user.user_account.database = updated_user.user_account.database
+    db_user.user_account_id = updated_user.user_account_id
     db.commit()
     db.refresh(db_user)
     return db_user

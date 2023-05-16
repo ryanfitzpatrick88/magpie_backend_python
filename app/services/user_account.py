@@ -1,6 +1,8 @@
+from typing import List, Optional
+
 from sqlalchemy.orm import Session
 from app.db.models.user import UserAccount
-from app.schemas.user import UserAccountCreate, UserAccountUpdate
+from app.schemas.user_account import UserAccountCreate, UserAccountUpdate
 
 def create_user_account(db: Session, user_account: UserAccountCreate) -> UserAccount:
     db_user_account = UserAccount(database=user_account.database)

@@ -3,6 +3,7 @@ from pydantic import BaseModel
 class UserAccount(BaseModel):
     database: str
     alias: str
+    is_active: bool
 
 class UserAccountCreate(UserAccount):
     pass
