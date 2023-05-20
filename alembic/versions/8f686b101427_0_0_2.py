@@ -36,7 +36,7 @@ def upgrade() -> None:
     # ### end Alembic commands ###
     with op.batch_alter_table("transactions") as batch_op:
         batch_op.add_column(sa.Column('batch_id', sa.Integer,
-                                      sa.ForeignKey('import_batches.id', name='fk_transactions_import_batches')))
+                            sa.ForeignKey('import_batches.id', name='fk_transactions_import_batches')))
 
 
 def downgrade() -> None:

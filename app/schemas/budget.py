@@ -1,6 +1,7 @@
 from datetime import date
 from pydantic import BaseModel
 from typing import Optional
+from app.schemas.category import CategoryBase
 
 
 class BudgetBase(BaseModel):
@@ -8,17 +9,24 @@ class BudgetBase(BaseModel):
     amount: float
     start_date: date
     end_date: date
+    category_id: int
+    category: Optional[CategoryBase] = None
 
 
-class BudgetCreate(BudgetBase):
-    pass
+class BudgetCreate(BaseModel):
+    name: str
+    amount: float
+    start_date: date
+    end_date: date
+    category_id: int
 
 
-class BudgetUpdate(BudgetBase):
-    name: Optional[str] = None
-    amount: Optional[float] = None
-    start_date: Optional[date] = None
-    end_date: Optional[date] = None
+class BudgetUpdate(BaseModel):
+    name: str
+    amount: float
+    start_date: date
+    end_date: date
+    category_id: int
 
 
 class BudgetInDBBase(BudgetBase):

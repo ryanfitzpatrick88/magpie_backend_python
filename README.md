@@ -2,36 +2,54 @@
 
 ## alembic commands
 
-### to create next revision for database
-
-alembic revision --autogenerate -m "0.0.x"
-
-### upgrade the database
-
-alembic upgrade head
-
-### check the current revision
-
-alembic current
+### before running commands
+ensure __ init__.py in db.models is updated with new model
+<br/>
+ensure alembic.ini has the correct sqlalchemy.url
 
 ### check for upgrade operations
 
-alembic check
+```alembic check```
+
+### to create next revision for database
+
+```alembic revision --autogenerate -m "0.0.x"```
+
+### sqllite3 fix fk creation to use batching
+transactions is the table name<br/>
+batch_id is the column name<br/>
+import_batches is the fk table name<br/>
+fk_transactions_import_batches is the fk name
+```python
+    with op.batch_alter_table("transactions") as batch_op:
+        batch_op.add_column(sa.Column('batch_id', sa.Integer,
+                            sa.ForeignKey('import_batches.id', name='fk_transactions_import_batches')))
+```
+
+### upgrade the database
+
+```alembic upgrade head```
+
+### check the current revision
+
+```alembic current```
+
+
 
 
 ## roadmap
 
---pluggable accounts that contain the database connection.
+done --pluggable accounts that contain the database connection.
 
 --bulk delete of transactions based on batch
 
---duplicate analysis, before or after import?
+done --duplicate analysis, before or after import?
 
 --live real-time view when importing data?
 
 --live real-time view for maintaining the account balance, adjust when transactions are posted, transaction pending by default
 
---implement categories and refacto transaction to use category object.
+done --implement categories and refacto transaction to use category object.
 
 --mapping page for assigning categories to transactions
 
@@ -48,11 +66,12 @@ alembic check
 --google auth login
 
 --firebase auth login?
+
 --budgets duh
 
 --forecasting
 
---transaction import from csv (done)
+done --transaction import from csv (done)
 
 --mobile support
 

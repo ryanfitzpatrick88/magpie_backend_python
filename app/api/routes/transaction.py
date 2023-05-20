@@ -9,7 +9,7 @@ from app.schemas.user import UserInDB
 from app.services.transaction import create_transaction, get_transactions, get_transaction, update_transaction, \
     delete_transaction, preview_transactions, upload_transactions, delete_transactions_by_batch, \
     get_transactions_by_batch, get_transactions_by_date_range, get_transactions_by_date_range_for_duplicates
-from app.api.dependencies import get_current_user, get_user_db
+from app.dependencies.dependecies import get_current_user, get_user_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 

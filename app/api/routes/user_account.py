@@ -9,8 +9,7 @@ from app.db.models.user_account import UserAccount
 from app.db.models.user import User
 from app.services.user_account import create_user_account, get_user_accounts, get_user_account, \
     update_user_account, delete_user_account
-from app.dependencies.dependecies import get_db
-from app.api.dependencies import get_current_user
+from app.dependencies.dependecies import get_db, get_current_user
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")

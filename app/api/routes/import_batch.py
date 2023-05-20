@@ -7,7 +7,7 @@ from app.schemas.import_batch import ImportBatchBaseCreate, ImportBatchBaseUpdat
 from app.db.models.user import User
 from app.services.import_batch import create_import_batch, get_import_batchs, get_import_batch, update_import_batch, \
     delete_import_batch
-from app.api.dependencies import get_current_user, get_user_db
+from app.dependencies.dependecies import get_current_user, get_user_db
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
