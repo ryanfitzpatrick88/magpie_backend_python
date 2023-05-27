@@ -30,7 +30,7 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_import_batches_id'), 'import_batches', ['id'], unique=False)
-    op.add_column('transactions', sa.Column('batch_id', sa.Integer(), nullable=True))
+    #op.add_column('transactions', sa.Column('batch_id', sa.Integer(), nullable=True))
     #this failed, had to use the below
     #op.create_foreign_key(None, 'transactions', 'import_batches', ['batch_id'], ['id'])
     # ### end Alembic commands ###

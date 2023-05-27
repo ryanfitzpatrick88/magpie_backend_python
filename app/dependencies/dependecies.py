@@ -71,9 +71,9 @@ from sqlalchemy.orm import sessionmaker, Session
 
 def get_user_db(user: User = Depends(get_current_user)) -> Session:
     if user:
-        database_url = f'sqlite:///../database/{user.user_account.database}.db'
+        database_url = f'{settings.DATABASE_URL}/{user.user_account.database}'
     else:
-        database_url = settings.DATABASE_URL  # replace with your default url
+        database_url = f'{settings.DATABASE_URL}/users'  # replace with your default url
 
     engine = create_engine(database_url)
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

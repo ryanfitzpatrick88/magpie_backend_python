@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 
 engine = create_engine(
-    settings.DATABASE_URL, echo=True, connect_args={"check_same_thread": False}
+    f'{settings.DATABASE_URL}/users', echo=True
 )
 
 Base = declarative_base()

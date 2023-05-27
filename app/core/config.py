@@ -5,13 +5,13 @@ from datetime import timedelta
 from dotenv import load_dotenv
 
 class Settings(BaseSettings):
-    load_dotenv(".env.local")
+    load_dotenv("../.env.local")
 
     PROJECT_NAME: str = os.getenv("PROJECT_NAME", "Magpie")
     PROJECT_VERSION: str = os.getenv("PROJECT_VERSION", "0.0.1")
 
     API_V1_STR: str = os.getenv("API_V1_STR", "/api/v1")
-    ALLOWED_ORIGINS: List[AnyHttpUrl] = os.getenv("ALLOWED_ORIGINS", ["http://localhost:8080"])
+    ALLOWED_ORIGINS: List[str] = os.getenv("ALLOWED_ORIGINS", ["*"])
 
     DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///../database/app.db")
 
