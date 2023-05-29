@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
@@ -53,19 +53,19 @@ def delete_transaction_item(transaction_id: int, db: Session = Depends(get_user_
     return {"detail": "Transaction deleted successfully"}
 
 @router.post("/preview")
-async def preview_transactions_file(file: UploadFile = File(...), db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
+async def preview_transactions_file(file: UploadFile = File(...), id: str = Form(...), db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
     contents = await file.read()
     try:
-        transactions = preview_transactions(contents)
+        transactions = preview_transactions(contents, int(id))
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return transactions
 
 @router.post("/upload")
-async def upload_transactions_file(file: UploadFile = File(...), db: Session = Depends(get_user_db), current_user: UserInDB = Depends(get_current_user)):
+async def upload_transactions_file(file: UploadFile = File(...), id: str = Form(...), db: Session = Depends(get_user_db), current_user: UserInDB = Depends(get_current_user)):
     contents = await file.read()
     try:
-        upload_transactions(db, contents, file, current_user)
+        upload_transactions(db, contents, file, int(id), current_user)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"detail": "Transactions uploaded successfully"}

@@ -1,6 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel
 
+from app.schemas.category import CategoryBase, CategoryInDB
+
 
 class MerchantBase(BaseModel):
     name: str
@@ -17,6 +19,7 @@ class MerchantUpdate(MerchantBase):
 
 class MerchantInDB(MerchantBase):
     id: int
+    category: Optional[CategoryInDB] = None
 
     class Config:
         orm_mode = True

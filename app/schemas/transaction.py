@@ -2,8 +2,13 @@ from datetime import datetime, date
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
 from typing import Optional, List
-from app.schemas.import_batch import ImportBatchBase
 
+from app.schemas.bank_account import BankAccountBase, BankAccountInDB
+from app.schemas.import_batch import ImportBatchBase, ImportBatchBaseInDB
+
+"""
+This class is used to parse the CSV file uploaded by the user.
+"""
 class TransactionImport(BaseModel):
     Date: date = Field(..., alias="Date")
     Description: str = Field(..., alias="Description")
@@ -24,8 +29,9 @@ class TransactionBase(BaseModel):
     description: Optional[str] = None
     date: date
     batch_id: int
-    category: Optional[str] = None
     batch: Optional[ImportBatchBase] = None
+    bank_account_id: int
+    bank_account: Optional[BankAccountBase] = None
 
     class Config:
         orm_mode = True # Pydantic will read the data even if it is not a dict
@@ -38,6 +44,8 @@ class TransactionUpdate(TransactionBase):
 
 class TransactionInDB(TransactionBase):
     id: int
+    bank_account: Optional[BankAccountInDB] = None
+    batch: Optional[ImportBatchBaseInDB] = None
 
     class Config:
         orm_mode = True

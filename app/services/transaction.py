@@ -61,7 +61,7 @@ def get_transactions_by_date_range_for_duplicates(db: Session, start_date: str, 
     return duplicates
 
 def create_transaction(db: Session, transaction: TransactionCreate):
-    db_transaction = Transaction(**transaction.dict(exclude={"batch"}))
+    db_transaction = Transaction(**transaction.dict(exclude={"batch", "bank_account"}))
     db.add(db_transaction)
     db.commit()
     db.refresh(db_transaction)
@@ -88,7 +88,7 @@ def delete_transaction(db: Session, transaction_id: int):
 
 """get_transactions_by_batch"""
 def get_transactions_by_batch(db: Session, batch_id: int, page: int, page_size: int = 10):
-    transactions = db.query(Transaction).filter(Transaction.batch_id == batch_id)
+    transactions = db.query(Transaction).filter(batch_id == Transaction.batch_id)
     transactions = transactions.offset(page_size * (page - 1)).limit(page_size)
     return transactions.all()
 
@@ -102,7 +102,7 @@ def delete_transactions_by_batch(db: Session, batch_id: int):
     db.commit()
     return True
 
-def preview_transactions(file_contents: bytes):
+def preview_transactions(file_contents: bytes, bank_account_id: int):
     transactions = []
     file_str = file_contents.decode()
     reader = csv.DictReader(StringIO(file_str))
@@ -113,14 +113,15 @@ def preview_transactions(file_contents: bytes):
             description=transaction_raw.Description,
             amount=transaction_raw.Amount.replace('$', '', len(transaction_raw.Amount)),
             date=transaction_raw.Date,
-            batch_id=0
+            batch_id=0,
+            bank_account_id=bank_account_id
         )
         transactions.append(transaction_data)
 
     return transactions
 
 
-def upload_transactions(db: Session, file_contents: bytes, file, current_user: UserInDB):
+def upload_transactions(db: Session, file_contents: bytes, file, bank_account_id: int, current_user: UserInDB):
     file_str = file_contents.decode()
     reader = csv.DictReader(StringIO(file_str))
 
@@ -139,7 +140,7 @@ def upload_transactions(db: Session, file_contents: bytes, file, current_user: U
             description=transaction_raw.Description,
             amount=transaction_raw.Amount.replace('$','',len(transaction_raw.Amount)),
             date=transaction_raw.Date,
-            batch = batch,
-            batch_id = batch.id
+            batch_id = batch.id,
+            bank_account_id = bank_account_id
         )
         create_transaction(db, transaction_data)

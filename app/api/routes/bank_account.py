@@ -16,7 +16,6 @@ router = APIRouter()
 def create_new_bank_account(
     bank_account: BankAccountCreate,
     db: Session = Depends(get_user_db),
-    current_user: User = Depends(get_current_user),
 ):
     return create_bank_account(db=db, bank_account=bank_account)
 

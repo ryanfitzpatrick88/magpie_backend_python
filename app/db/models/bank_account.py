@@ -4,6 +4,7 @@ from .base import BaseModel
 from enum import Enum as PyEnum
 
 class AccountType(PyEnum):
+    CHEQUING = "CHEQUING"
     CHECKING = "CHECKING"
     SAVINGS = "SAVINGS"
     CREDIT_CARD = "CREDIT_CARD"
