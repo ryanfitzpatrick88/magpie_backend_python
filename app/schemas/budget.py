@@ -1,7 +1,7 @@
 from datetime import date
 from pydantic import BaseModel
 from typing import Optional
-from app.schemas.category import CategoryBase
+from app.schemas.category import CategoryInDB
 
 
 class BudgetBase(BaseModel):
@@ -10,7 +10,6 @@ class BudgetBase(BaseModel):
     start_date: date
     end_date: date
     category_id: int
-    category: Optional[CategoryBase] = None
 
 
 class BudgetCreate(BaseModel):
@@ -31,6 +30,7 @@ class BudgetUpdate(BaseModel):
 
 class BudgetInDBBase(BudgetBase):
     id: int
+    category: Optional[CategoryInDB] = None
 
     class Config:
         orm_mode = True

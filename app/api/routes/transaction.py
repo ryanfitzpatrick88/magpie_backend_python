@@ -27,7 +27,7 @@ def read_transactions(skip: int = 0, limit: int = 100, db: Session = Depends(get
 
 # get all transactions by date range, with page and limit
 @router.get("/getByDateRange", response_model=List[TransactionInDB])
-def read_transactions_by_date_range(start_date: str, end_date: str, page: int = 0, db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
+def read_transactions_by_date_range(start_date: str, end_date: str, page: int = 1, db: Session = Depends(get_user_db), current_user: User = Depends(get_current_user)):
     transactions = get_transactions_by_date_range(db, start_date=start_date, end_date=end_date, page=page)
     return transactions
 

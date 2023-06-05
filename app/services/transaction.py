@@ -19,7 +19,7 @@ def get_transaction(db: Session, transaction_id: int):
     return db.query(Transaction).filter(Transaction.id == transaction_id).first()
 
 # get_transactions_by_date_range
-def get_transactions_by_date_range(db: Session, start_date: str, end_date: str, page: int = 0, page_size: int = 10):
+def get_transactions_by_date_range(db: Session, start_date: str, end_date: str, page: int = 1, page_size: int = 10):
     transactions = db.query(Transaction).filter(and_(Transaction.date >= start_date, Transaction.date <= end_date))
     transactions = transactions.offset(page_size * (page - 1)).limit(page_size)
     return transactions.all()
